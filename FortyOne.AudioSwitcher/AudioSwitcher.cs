@@ -19,6 +19,7 @@ using FortyOne.AudioSwitcher.Configuration;
 using FortyOne.AudioSwitcher.Helpers;
 using FortyOne.AudioSwitcher.HotKeyData;
 using FortyOne.AudioSwitcher.Properties;
+using Tulpep.NotificationWindow;
 
 namespace FortyOne.AudioSwitcher
 {
@@ -769,7 +770,7 @@ namespace FortyOne.AudioSwitcher
             chkNotifyUpdates.Checked = Program.Settings.UpdateNotificationsEnabled;
 
             chkShowDiabledDevices.Checked = Program.Settings.ShowDisabledDevices;
-	        chkShowUnknownDevicesInHotkeyList.Checked = Program.Settings.ShowUnknownDevicesInHotkeyList;
+            chkShowUnknownDevicesInHotkeyList.Checked = Program.Settings.ShowUnknownDevicesInHotkeyList;
             chkShowDisconnectedDevices.Checked = Program.Settings.ShowDisconnectedDevices;
             chkShowDPDeviceIconInTray.Checked = Program.Settings.ShowDPDeviceIconInTray;
 
@@ -1295,6 +1296,14 @@ namespace FortyOne.AudioSwitcher
                 if (hk.Device == null || hk.Device.IsDefaultDevice)
                     return;
 
+                var popup = new PopupNotifier();
+                popup.ContentText = $"Switched to {hk.DeviceName}";
+                popup.AnimationDuration = 1;
+                popup.AnimationInterval = 1000;
+                popup.Popup();
+
+
+
                 await hk.Device.SetAsDefaultAsync();
 
                 if (Program.Settings.DualSwitchMode)
@@ -1465,18 +1474,18 @@ namespace FortyOne.AudioSwitcher
             PostRecordingMenuClick(id);
         }
 
-		private void chkShowUnknownDevicesInHotkeyList_CheckedChanged(object sender, EventArgs e)
-		{
-			Program.Settings.ShowUnknownDevicesInHotkeyList = chkShowUnknownDevicesInHotkeyList.Checked;
+        private void chkShowUnknownDevicesInHotkeyList_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Settings.ShowUnknownDevicesInHotkeyList = chkShowUnknownDevicesInHotkeyList.Checked;
 
-			if (IsHandleCreated)
-			{
-				BeginInvoke((Action)(() =>
-				{
-					HotKeyManager.RefreshHotkeys();
-					RefreshGrid();
-				}));
-			}
-		}
-	}
+            if (IsHandleCreated)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    HotKeyManager.RefreshHotkeys();
+                    RefreshGrid();
+                }));
+            }
+        }
+    }
 }
